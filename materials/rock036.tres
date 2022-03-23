@@ -1,0 +1,23 @@
+[gd_resource type="SpatialMaterial" load_steps=5 format=2]
+
+[ext_resource path="res://assets/Rock036_2K-JPG/Rock036_2K_AmbientOcclusion.jpg" type="Texture" id=1]
+[ext_resource path="res://assets/Rock036_2K-JPG/Rock036_2K_NormalGL.jpg" type="Texture" id=2]
+[ext_resource path="res://assets/Rock036_2K-JPG/Rock036_2K_Roughness.jpg" type="Texture" id=3]
+[ext_resource path="res://assets/Rock036_2K-JPG/Rock036_2K_Color.jpg" type="Texture" id=4]
+
+[resource]
+flags_world_triplanar = true
+albedo_texture = ExtResource( 4 )
+metallic_specular = 0.2
+roughness_texture = ExtResource( 3 )
+normal_enabled = true
+normal_scale = 1.0
+normal_texture = ExtResource( 2 )
+ao_enabled = true
+ao_light_affect = 1.0
+ao_texture = ExtResource( 1 )
+ao_on_uv2 = false
+ao_texture_channel = 0
+uv1_scale = Vector3( 0.005, 0.005, 0.005 )
+uv1_triplanar = true
+uv1_triplanar_sharpness = 3.60499
