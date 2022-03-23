@@ -1,0 +1,50 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "Reference",
+"class": "Enum",
+"language": "GDScript",
+"path": "res://scripts/ToolType.gd"
+}, {
+"base": "MeshInstance",
+"class": "ToolVisual",
+"language": "GDScript",
+"path": "res://scripts/ToolVisual.gd"
+} ]
+_global_script_class_icons={
+"Enum": "",
+"ToolVisual": ""
+}
+
+[application]
+
+config/name="Reckless Wings - Editor"
+run/main_scene="res://Editor.tscn"
+config/icon="res://icon.png"
+
+[debug]
+
+gdscript/warnings/unused_class_variable=true
+
+[display]
+
+window/size/fullscreen=true
+window/vsync/use_vsync=false
+
+[physics]
+
+common/enable_pause_aware_picking=true
+
+[rendering]
+
+quality/shadows/filter_mode=2
+quality/filters/msaa=2
+environment/default_environment="res://default_env.tres"

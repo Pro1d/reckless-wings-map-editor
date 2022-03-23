@@ -1,0 +1,30 @@
+[gd_resource type="Environment" load_steps=2 format=2]
+
+[sub_resource type="ProceduralSky" id=1]
+sky_top_color = Color( 0.45098, 0.784314, 0.964706, 1 )
+ground_bottom_color = Color( 0.635294, 0.788235, 0.890196, 1 )
+ground_horizon_color = Color( 0.705882, 0.839216, 0.937255, 1 )
+
+[resource]
+background_mode = 2
+background_sky = SubResource( 1 )
+ambient_light_energy = 1.5
+fog_depth_enabled = false
+auto_exposure_enabled = true
+ss_reflections_enabled = true
+ss_reflections_max_steps = 128
+ss_reflections_fade_in = 0.0832178
+ss_reflections_fade_out = 1.51572
+ss_reflections_depth_tolerance = 6.0
+ss_reflections_roughness = false
+ssao_enabled = true
+ssao_radius = 85.0
+ssao_intensity = 42.5
+ssao_radius2 = 1.7
+ssao_intensity2 = 50.0
+ssao_bias = 0.15
+ssao_light_affect = 0.3
+ssao_ao_channel_affect = 1.0
+ssao_quality = 2
+ssao_edge_sharpness = 0.1
+glow_enabled = true

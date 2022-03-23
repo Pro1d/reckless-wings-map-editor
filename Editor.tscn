@@ -1,0 +1,278 @@
+[gd_scene load_steps=41 format=2]
+
+[ext_resource path="res://materials/realistic_terrain.gdshader" type="Shader" id=1]
+[ext_resource path="res://scripts/VoxelModifier.gd" type="Script" id=2]
+[ext_resource path="res://scripts/Camera.gd" type="Script" id=3]
+[ext_resource path="res://island_cpp_gen.tres" type="VoxelGeneratorIsland" id=4]
+[ext_resource path="res://assets/Moss002_2K-JPG/Moss002_2K_Color.jpg" type="Texture" id=5]
+[ext_resource path="res://assets/Rock029_2K-JPG/Rock029_2K_AmbientOcclusion.jpg" type="Texture" id=6]
+[ext_resource path="res://assets/Rock029_2K-JPG/Rock029_2K_Color.jpg" type="Texture" id=7]
+[ext_resource path="res://assets/Rock029_2K-JPG/Rock029_2K_NormalGL.jpg" type="Texture" id=8]
+[ext_resource path="res://assets/Ground049A_2K-JPG/Ground049A_2K_NormalGL.jpg" type="Texture" id=9]
+[ext_resource path="res://assets/Ground033_2K-JPG/Ground033_2K_Roughness.jpg" type="Texture" id=10]
+[ext_resource path="res://assets/Moss002_2K-JPG/Moss002_2K_Roughness.jpg" type="Texture" id=11]
+[ext_resource path="res://assets/Moss002_2K-JPG/Moss002_2K_NormalGL.jpg" type="Texture" id=12]
+[ext_resource path="res://assets/Ground033_2K-JPG/Ground033_2K_NormalGL.jpg" type="Texture" id=13]
+[ext_resource path="res://assets/Moss002_2K-JPG/Moss002_2K_AmbientOcclusion.jpg" type="Texture" id=14]
+[ext_resource path="res://assets/Ground033_2K-JPG/Ground033_2K_Color.jpg" type="Texture" id=15]
+[ext_resource path="res://assets/Ground033_2K-JPG/Ground033_2K_AmbientOcclusion.jpg" type="Texture" id=16]
+[ext_resource path="res://HUD.tscn" type="PackedScene" id=17]
+[ext_resource path="res://assets/pa18/piper_pa18.tscn" type="PackedScene" id=18]
+[ext_resource path="res://scripts/ToolVisual.gd" type="Script" id=19]
+[ext_resource path="res://scripts/tool_shader.tres" type="Material" id=20]
+[ext_resource path="res://scripts/piper_pa18.gd" type="Script" id=21]
+[ext_resource path="res://assets/trees/palm_tree/palm_tree_01.mesh" type="ArrayMesh" id=22]
+[ext_resource path="res://assets/trees/pine/pine.mesh" type="ArrayMesh" id=23]
+[ext_resource path="res://assets/trees/fern/fern.mesh" type="ArrayMesh" id=24]
+
+[sub_resource type="VoxelMesherTransvoxel" id=12]
+
+[sub_resource type="ShaderMaterial" id=24]
+shader = ExtResource( 1 )
+shader_param/specular = 0.2
+shader_param/metallic = 0.0
+shader_param/roughness = 1.0
+shader_param/normal_scale = 1.0
+shader_param/ao_light_affect = 1.0
+shader_param/uv1_scale = 0.005
+shader_param/texture_albedo = ExtResource( 7 )
+shader_param/texture_roughness = ExtResource( 10 )
+shader_param/texture_normal = ExtResource( 8 )
+shader_param/texture_ambient_occlusion = ExtResource( 6 )
+shader_param/texture_albedo_top = ExtResource( 5 )
+shader_param/texture_roughness_top = ExtResource( 11 )
+shader_param/texture_normal_top = ExtResource( 12 )
+shader_param/texture_ambient_occlusion_top = ExtResource( 14 )
+shader_param/texture_albedo_bottom = ExtResource( 15 )
+shader_param/texture_roughness_bottom = ExtResource( 10 )
+shader_param/texture_normal_bottom = ExtResource( 13 )
+shader_param/texture_ambient_occlusion_bottom = ExtResource( 16 )
+
+[sub_resource type="FastNoiseLite" id=29]
+fractal_type = 2
+
+[sub_resource type="VoxelInstanceGenerator" id=30]
+density = 0.259
+emit_mode = 1
+max_slope_degrees = 30.0
+min_height = 8.2
+max_height = 9.0
+min_scale = 0.2
+max_scale = 0.25
+noise = SubResource( 29 )
+noise_dimension = 0
+
+[sub_resource type="VoxelInstanceLibraryItem" id=31]
+name = "palm"
+lod_index = 1
+generator = SubResource( 30 )
+mesh = ExtResource( 22 )
+mesh_lod1 = ExtResource( 22 )
+mesh_lod2 = ExtResource( 22 )
+mesh_lod3 = ExtResource( 22 )
+
+[sub_resource type="FastNoiseLite" id=33]
+period = 128.0
+fractal_type = 3
+
+[sub_resource type="VoxelInstanceGenerator" id=34]
+density = 0.4
+emit_mode = 1
+max_slope_degrees = 31.5
+min_height = 12.0
+max_height = 256.0
+min_scale = 0.57
+max_scale = 0.7
+noise = SubResource( 33 )
+
+[sub_resource type="VoxelInstanceLibraryItem" id=35]
+name = "pine"
+lod_index = 1
+generator = SubResource( 34 )
+mesh = ExtResource( 23 )
+mesh_lod1 = ExtResource( 23 )
+mesh_lod2 = ExtResource( 23 )
+mesh_lod3 = ExtResource( 23 )
+
+[sub_resource type="FastNoiseLite" id=36]
+fractal_type = 2
+
+[sub_resource type="VoxelInstanceGenerator" id=37]
+density = 1.0
+emit_mode = 1
+max_slope_degrees = 30.0
+min_height = 8.1
+max_height = 9.1
+min_scale = 0.35
+max_scale = 0.45
+vertical_alignment = 0.0
+offset_along_normal = -0.05
+noise = SubResource( 36 )
+noise_dimension = 0
+
+[sub_resource type="VoxelInstanceLibraryItem" id=38]
+name = "fern"
+lod_index = 1
+generator = SubResource( 37 )
+mesh = ExtResource( 24 )
+mesh_lod1 = ExtResource( 24 )
+mesh_lod2 = ExtResource( 24 )
+mesh_lod3 = ExtResource( 24 )
+
+[sub_resource type="VoxelInstanceLibrary" id=32]
+item_1 = SubResource( 31 )
+item_2 = SubResource( 35 )
+item_3 = SubResource( 38 )
+
+[sub_resource type="PlaneMesh" id=19]
+size = Vector2( 16384, 16384 )
+subdivide_width = 4
+subdivide_depth = 4
+
+[sub_resource type="Shader" id=25]
+code = "// NOTE: Shader automatically converted from Godot Engine 3.4.3.stable's SpatialMaterial.
+
+shader_type spatial;
+render_mode blend_mix,depth_draw_opaque,cull_disabled,diffuse_burley,specular_schlick_ggx;
+uniform vec4 albedo : hint_color;
+uniform sampler2D texture_albedo : hint_albedo;
+uniform float metallic : hint_range(0,1);
+uniform float roughness : hint_range(0,1);
+uniform sampler2D texture_normal : hint_normal;
+uniform float normal_scale : hint_range(-2,2);
+uniform float uv1_scale;
+uniform float shore_max_depth : hint_range(0, 64);
+uniform float shore_noise_factor : hint_range(0, 16);
+uniform float shore_period : hint_range(0, 16);
+uniform float shore_speed;
+uniform sampler2D texture_shore_noise : hint_white;
+const float M_2PI = 2.0 * 3.14159265359;
+const float phi = 1.61803398875;
+
+vec3 normalize_nmap(vec3 n) {
+	return normalize(n * 2. - 1.) * .5 + .5;
+}
+vec3 average_nmap(vec3 a, vec3 b) {
+	return normalize((a-.5) + (b-.5)) * .5 + .5;
+}
+void vertex() {
+	UV = UV * uv1_scale;
+	//UV2 = UV * uv1_scale * phi*1.0;
+}
+
+void fragment() {
+	vec2 base_uv = UV;
+	//vec2 base_uv2 = UV2;
+	vec4 albedo_tex = texture(texture_albedo, base_uv);
+	ALBEDO = albedo.rgb * albedo_tex.rgb;
+	METALLIC = metallic;
+	ROUGHNESS = roughness;
+	SPECULAR = 0.5;
+	float normal_far_attenuation = smoothstep(0., 0.1, dot(NORMAL,VIEW));
+	NORMALMAP = texture(texture_normal,base_uv).rgb;
+	//NORMALMAP = average_nmap(texture(texture_normal,base_uv).rgb, vec3(0.5,0.5,-1));
+	//NORMALMAP = average_nmap(texture(texture_normal,base_uv).rgb, texture(texture_normal,base_uv2).rgb);
+	NORMALMAP_DEPTH = normal_scale * normal_far_attenuation;
+	/*
+	float shore_noise_tex = texture(texture_shore_noise, base_uv).r;
+	float depth_tex = texture(DEPTH_TEXTURE,SCREEN_UV).r;
+	vec4 world_pos = INV_PROJECTION_MATRIX * vec4(SCREEN_UV*2.0-1.0,depth_tex*2.0-1.0,1.0);
+	float depth = max(VERTEX.z - world_pos.z / world_pos.w, 0.0);
+	float shore_ratio = clamp((shore_max_depth - depth) / shore_max_depth, 0.0, 1.0);
+	float shore_anim = sin((shore_ratio * shore_period + shore_noise_tex * shore_noise_factor) * 2.0 * 3.1415 + TIME * shore_speed) * .5 + .5;
+	float shore = shore_ratio * (1.0 + shore_anim);
+	float shore_sharp = smoothstep(0.8, 1.0, shore);*/
+}
+"
+
+[sub_resource type="ShaderMaterial" id=26]
+shader = SubResource( 25 )
+shader_param/albedo = Color( 0.105882, 0.137255, 0.156863, 1 )
+shader_param/metallic = 0.5
+shader_param/roughness = 0.1
+shader_param/normal_scale = 0.25
+shader_param/uv1_scale = 200.0
+shader_param/shore_max_depth = null
+shader_param/shore_noise_factor = null
+shader_param/shore_period = null
+shader_param/shore_speed = null
+shader_param/texture_normal = ExtResource( 9 )
+
+[sub_resource type="QuadMesh" id=27]
+size = Vector2( 102, 102 )
+
+[node name="Editor" type="Spatial"]
+
+[node name="HUD" parent="." instance=ExtResource( 17 )]
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( 0.482724, -0.355571, 0.800342, 0, 0.913869, 0.406009, -0.875773, -0.19599, 0.441146, 891.001, 323.638, 479.313 )
+current = true
+near = 2.0
+far = 4096.0
+script = ExtResource( 3 )
+
+[node name="VoxelViewer" type="VoxelViewer" parent="Camera"]
+view_distance = 1024
+requires_collisions = false
+
+[node name="piper_pa18" parent="Camera" instance=ExtResource( 18 )]
+transform = Transform( -1, -1.49012e-08, -1.19209e-07, 0, 1, 3.72529e-08, -2.98023e-08, -2.23517e-08, -1, 0, -2.7, -7 )
+visible = false
+script = ExtResource( 21 )
+
+[node name="DirectionalLight" type="DirectionalLight" parent="."]
+transform = Transform( 1, 0, 0, 0, -0.819152, 0.573576, 0, -0.573576, -0.819152, 0, 256, 0 )
+light_energy = 4.0
+shadow_enabled = true
+shadow_bias = 2.0
+directional_shadow_blend_splits = true
+directional_shadow_depth_range = 1
+directional_shadow_max_distance = 1024.0
+
+[node name="VoxelLodTerrain" type="VoxelLodTerrain" parent="."]
+transform = Transform( 4, 0, 0, 0, 4, 0, 0, 0, 4, 0, -32, 0 )
+generator = ExtResource( 4 )
+mesher = SubResource( 12 )
+view_distance = 1024
+voxel_bounds = AABB( -256, 0, -256, 512, 256, 512 )
+lod_distance = 128.0
+material = SubResource( 24 )
+script = ExtResource( 2 )
+
+[node name="VoxelInstancer" type="VoxelInstancer" parent="VoxelLodTerrain"]
+library = SubResource( 32 )
+
+[node name="water" type="MeshInstance" parent="."]
+mesh = SubResource( 19 )
+material/0 = SubResource( 26 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="ToolTangent" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 47.5329, 40.5273, 320.279 )
+visible = false
+cast_shadow = 0
+mesh = SubResource( 27 )
+material/0 = ExtResource( 20 )
+script = ExtResource( 19 )
+
+[node name="piper_pa19" parent="." instance=ExtResource( 18 )]
+transform = Transform( 0.353321, -0.172414, 0.919477, -0.0384943, 0.979358, 0.198434, -0.93471, -0.105506, 0.339391, 204.458, 1.09341, 46.1904 )
+script = ExtResource( 21 )
+
+[connection signal="reset_camera_triggered" from="HUD" to="Camera" method="_on_HUD_reset_camera_triggered"]
+[connection signal="save_map" from="HUD" to="VoxelLodTerrain" method="_on_HUD_save_map"]
+[connection signal="tool_radius_changed" from="HUD" to="VoxelLodTerrain" method="_on_HUD_tool_radius_changed"]
+[connection signal="tool_radius_changed" from="HUD" to="ToolTangent" method="_on_HUD_tool_radius_changed"]
+[connection signal="tool_type_changed" from="HUD" to="VoxelLodTerrain" method="_on_HUD_tool_type_changed"]
+[connection signal="tool_weight_changed" from="HUD" to="VoxelLodTerrain" method="_on_HUD_tool_weight_changed"]
+[connection signal="moving" from="Camera" to="VoxelLodTerrain" method="_on_camera_moving"]
+[connection signal="moving" from="Camera" to="ToolTangent" method="_on_camera_moving"]
+[connection signal="rotating" from="Camera" to="VoxelLodTerrain" method="_on_camera_moving"]
+[connection signal="rotating" from="Camera" to="ToolTangent" method="_on_camera_rotating"]
+[connection signal="tool_position_changed" from="VoxelLodTerrain" to="Camera" method="_on_tool_position_changed"]
+[connection signal="tool_position_changed" from="VoxelLodTerrain" to="ToolTangent" method="_on_tool_position_changed"]
+[connection signal="tool_position_invalid" from="VoxelLodTerrain" to="Camera" method="_on_tool_position_invalid"]
+[connection signal="tool_position_invalid" from="VoxelLodTerrain" to="ToolTangent" method="_on_tool_position_invalid"]

@@ -1,0 +1,36 @@
+[gd_resource type="VoxelGeneratorIsland" load_steps=6 format=2]
+
+[sub_resource type="OpenSimplexNoise" id=1]
+seed = 3
+octaves = 1
+period = 256.0
+
+[sub_resource type="OpenSimplexNoise" id=2]
+octaves = 2
+period = 2.0
+
+[sub_resource type="Curve" id=3]
+bake_resolution = 256
+_data = [ Vector2( 0, 0 ), 0.0, 0.172159, 0, 0, Vector2( 0.415842, 0.0943182 ), 0.671841, 0.671841, 0, 0, Vector2( 1, 1 ), 1.74679, 0.0, 0, 0 ]
+
+[sub_resource type="Curve" id=4]
+bake_resolution = 256
+_data = [ Vector2( 0, 0 ), 0.0, 22.0364, 0, 0, Vector2( 0.0924093, 0.718182 ), 0.612122, 0.612122, 0, 0, Vector2( 1, 1 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="OpenSimplexNoise" id=5]
+seed = 2
+octaves = 5
+period = 128.0
+
+[resource]
+voxel_scale = 4.0
+sea_height = 32.0
+max_height = 224.0
+radius = 1024.0
+ground_ratio = 0.3
+biome_noise = SubResource( 1 )
+height_noise = SubResource( 5 )
+curve_biome0 = SubResource( 3 )
+curve_biome1 = SubResource( 4 )
+cliff_noise = SubResource( 2 )
+cliff_noise_factor = 1.0
