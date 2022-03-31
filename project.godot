@@ -17,7 +17,7 @@ _global_script_classes=[ {
 "base": "MeshInstance",
 "class": "ToolVisual",
 "language": "GDScript",
-"path": "res://ToolVisual.gd"
+"path": "res://scripts/ToolVisual.gd"
 } ]
 _global_script_class_icons={
 "Enum": "",

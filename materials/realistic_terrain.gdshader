@@ -27,8 +27,8 @@ const int uv1_blend_sharpness = 16;
 varying vec3 uv1_power_normal;
 uniform float uv1_scale;
 varying float v_height;
-const float wet_metallic = 0.75;
-const float wet_roughness = 0.2;
+const float wet_metallic = 0.85;
+const float wet_roughness = 0.6;
 const float shore_height = 17.0; // must be > 2^lod_max
 
 void vertex() {
@@ -83,8 +83,8 @@ void fragment() {
 	float shore = smoothstep(0, shore_height, v_height);
 	vec4 albedo_tex = triplanar_texture_auto(
 		texture_albedo, texture_albedo_top, texture_albedo_bottom, shore, uv1_power_normal, uv1_triplanar_pos);
-	float roughness_tex = triplanar_texture_auto(
-		texture_roughness, texture_roughness_top, texture_roughness_bottom, shore, uv1_power_normal, uv1_triplanar_pos).r;
+	//float roughness_tex = triplanar_texture_auto(
+	//	texture_roughness, texture_roughness_top, texture_roughness_bottom, shore, uv1_power_normal, uv1_triplanar_pos).r;
 	float ao_tex = triplanar_texture_auto(
 		texture_ambient_occlusion, texture_ambient_occlusion_top, texture_ambient_occlusion_bottom, shore, uv1_power_normal, uv1_triplanar_pos).r;
 	vec3 normal_tex = normalize_nmap(triplanar_texture_auto(
@@ -92,7 +92,7 @@ void fragment() {
 	float wet = 1.0 - smoothstep(0, 2, v_height);
 	ALBEDO = albedo_tex.rgb;
 	METALLIC = mix(metallic, wet_metallic, wet);
-	ROUGHNESS = mix(roughness_tex * roughness, wet_roughness, wet);
+	ROUGHNESS = mix(/*roughness_tex * */roughness, wet_roughness, wet);
 	SPECULAR = specular;
 	NORMALMAP = normal_tex;
 	NORMALMAP_DEPTH = normal_scale;
