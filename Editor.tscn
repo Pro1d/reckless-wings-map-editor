@@ -50,16 +50,18 @@ shader_param/texture_ambient_occlusion_bottom = ExtResource( 16 )
 fractal_type = 2
 
 [sub_resource type="VoxelInstanceGenerator" id=30]
-density = 0.05
+density = 0.116
+emit_mode = 1
 max_slope_degrees = 30.0
 min_height = 8.2
-max_height = 12.0
+max_height = 9.0
 min_scale = 0.23
 max_scale = 0.27
 noise = SubResource( 29 )
 noise_dimension = 0
 
 [sub_resource type="VoxelInstanceLibraryItem" id=31]
+lod_index = 1
 generator = SubResource( 30 )
 mesh = ExtResource( 22 )
 mesh_lod1 = ExtResource( 22 )

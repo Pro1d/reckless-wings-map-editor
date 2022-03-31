@@ -2,6 +2,7 @@ extends Camera
 
 enum CameraAction { ROTATE, MOVE, NONE }
 enum AnchorMode { LOCAL, GLOBAL, CAMERA }
+enum AnchorFallback { NULL, CAMERA, MAX }
 
 class Anchor:
 	var position : Vector3
@@ -11,7 +12,7 @@ class Anchor:
 		normal = n
 
 signal rotating(is_rotating)
-signal moving(is_moving)
+signal moving(is_moving, horizontal_anchor)
 
 export(float, EXP) var anchor_max_range := 1024.0
 export var zoom_step := 1.1
@@ -30,18 +31,21 @@ var saved_mouse_position : Vector2
 
 onready var default_transform := global_transform
 
-func get_anchor_point(screen_pos : Vector2, fallback_origin := false) -> Anchor:
+func get_anchor_point(screen_pos : Vector2, fallback := AnchorFallback.NULL) -> Anchor:
 	if tool_valid:
 		return Anchor.new(tool_position, tool_normal)
-	elif fallback_origin:
-		return Anchor.new(global_transform.origin, Vector3.UP)
-	else:
-		var from := project_ray_origin(screen_pos)
-		var direction := project_ray_normal(screen_pos)
-		var ray_length := anchor_max_range if direction.y >= 0 \
-			else min((0.0 - from.y) / direction.y, anchor_max_range)
-		var to := from + direction * ray_length
-		return Anchor.new(to, Vector3.UP)
+	match fallback:
+		AnchorFallback.CAMERA:
+			return Anchor.new(global_transform.origin, Vector3.UP)
+		AnchorFallback.MAX:
+			var from := project_ray_origin(screen_pos)
+			var direction := project_ray_normal(screen_pos)
+			var ray_length := anchor_max_range if direction.y >= 0 \
+				else min((0.0 - from.y) / direction.y, anchor_max_range)
+			var to := from + direction * ray_length
+			return Anchor.new(to, Vector3.UP)
+		AnchorFallback.NULL, _:
+			return null
 
 func apply_zoom(factor : float):
 	var current_pos := global_transform.origin
@@ -57,10 +61,16 @@ func apply_zoom(factor : float):
 	global_translate(anchor_direction * anchor_distance * (1 - 1 / factor))
 
 func start_move(event : InputEvent) -> void:
-	anchor = get_anchor_point(event.position, false)
-	action = CameraAction.MOVE
-	Input.set_default_cursor_shape(Input.CURSOR_DRAG)
-	emit_signal("moving", true)
+	if not event.control and not event.alt and event.shift:
+		moving_anchor_mode = AnchorMode.GLOBAL
+	else:
+		moving_anchor_mode = AnchorMode.CAMERA
+	anchor = get_anchor_point(event.position, AnchorFallback.NULL)
+	
+	if anchor != null:
+		action = CameraAction.MOVE
+		Input.set_default_cursor_shape(Input.CURSOR_DRAG)
+		emit_signal("moving", true, moving_anchor_mode == AnchorMode.GLOBAL)
 
 func apply_move(screen_pos : Vector2) -> bool:
 	var normal := Vector3.UP # AnchorMode.GLOBAL
@@ -82,17 +92,24 @@ func apply_move(screen_pos : Vector2) -> bool:
 func end_move() -> void:
 	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
 	action = CameraAction.NONE
-	emit_signal("moving", false)
+	emit_signal("moving", false, false)
 
 func start_rotate(event : InputEvent) -> void:
-	anchor = get_anchor_point(event.position, true)
-	action = CameraAction.ROTATE
-	saved_mouse_position = event.global_position
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	emit_signal("rotating", true)
+	if not event.control and not event.alt and event.shift:
+		anchor = Anchor.new(global_transform.origin, Vector3.UP)
+		rotating_anchor_mode = AnchorMode.CAMERA
+	else:
+		anchor = get_anchor_point(event.position, AnchorFallback.NULL)
+		rotating_anchor_mode = AnchorMode.LOCAL
+
+	if anchor != null:
+		action = CameraAction.ROTATE
+		saved_mouse_position = event.global_position
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+		emit_signal("rotating", true)
 
 func apply_rotate(screen_delta : Vector2):
-	var use_anchor : bool = rotating_anchor_mode == AnchorMode.GLOBAL
+	var use_anchor : bool = rotating_anchor_mode == AnchorMode.LOCAL
 	var delta_sign := -1.0 if use_anchor else 1.0
 	var delta_scale := rotate_speed / max(get_viewport().size.x, get_viewport().size.y)
 	var rot_y_global := screen_delta.x * delta_scale * delta_sign
@@ -128,7 +145,7 @@ func new_action_allowed() -> bool:
 func _unhandled_input(event : InputEvent):
 	if event is InputEventMouseButton:
 		var e := event as InputEventMouseButton
-		if not (event.control or event.alt or event.shift):
+		if not (event.control or event.alt):
 			if e.button_index == BUTTON_RIGHT:
 				if e.pressed:
 					if new_action_allowed():
@@ -145,12 +162,12 @@ func _unhandled_input(event : InputEvent):
 						end_move()
 			elif e.button_index == BUTTON_WHEEL_DOWN:
 				if new_action_allowed():
-					anchor = get_anchor_point(event.position, false)
+					anchor = get_anchor_point(event.position, AnchorFallback.MAX)
 					apply_zoom(1.0 / zoom_step)
 					clamp_position()
 			elif e.button_index == BUTTON_WHEEL_UP:
 				if new_action_allowed():
-					anchor = get_anchor_point(event.position, false)
+					anchor = get_anchor_point(event.position, AnchorFallback.MAX)
 					apply_zoom(zoom_step)
 					clamp_position()
 	elif event is InputEventMouseMotion:

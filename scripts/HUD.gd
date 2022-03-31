@@ -13,6 +13,7 @@ var tool_weight : float = 0.0 setget set_tool_weight
 
 onready var button_burry := $CenterContainer/Tools/ButtonBurry
 onready var button_dig := $CenterContainer/Tools/ButtonDig
+onready var button_level := $CenterContainer/Tools/ButtonLevel
 onready var button_plane := $CenterContainer/Tools/ButtonPlane
 onready var button_smooth := $CenterContainer/Tools/ButtonSmooth
 onready var button_crease := $CenterContainer/Tools/ButtonCrease
@@ -24,6 +25,7 @@ func _ready():
 	var _e := OK # enum Error
 	_e = button_burry.connect("pressed", self, "_button_burry")
 	_e = button_dig.connect("pressed", self, "_button_dig")
+	_e = button_level.connect("pressed", self, "_button_level")
 	_e = button_plane.connect("pressed", self, "_button_plane")
 	_e = button_smooth.connect("pressed", self, "_button_smooth")
 	_e = button_crease.connect("pressed", self, "_button_crease")
@@ -50,6 +52,7 @@ func set_tool_type(type) -> void:
 	tool_type = type
 	button_burry.set_pressed_no_signal(type == ToolType.BURRY)
 	button_dig.set_pressed_no_signal(type == ToolType.DIG)
+	button_level.set_pressed_no_signal(type == ToolType.LEVEL)
 	button_plane.set_pressed_no_signal(type == ToolType.PLANE)
 	button_smooth.set_pressed_no_signal(type == ToolType.SMOOTH)
 	button_crease.set_pressed_no_signal(type == ToolType.CREASE)
@@ -69,6 +72,8 @@ func _button_burry():
 	self.tool_type = ToolType.BURRY
 func _button_dig():
 	self.tool_type = ToolType.DIG
+func _button_level():
+	self.tool_type = ToolType.LEVEL
 func _button_plane():
 	self.tool_type = ToolType.PLANE
 func _button_smooth():

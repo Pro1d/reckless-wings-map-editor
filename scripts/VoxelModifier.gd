@@ -15,6 +15,8 @@ class RaycastResult:
 export(float, EXP) var max_edition_distance := 1024.0
 const edition_time_step := 1.0 / 60
 
+var constraint_enabled := false
+var constraint_plane : Plane
 var raycast_result : RaycastResult
 var raycast_dirty := true
 var camera_active := false
@@ -30,7 +32,7 @@ onready var camera := get_parent().get_node("Camera") as Camera
 onready var voxel_tool := get_voxel_tool() as VoxelToolLodTerrain
 onready var screen_pos := get_viewport().get_mouse_position()
 
-func _ready():
+func _enter_tree():
 	var s := VoxelStreamRegionFiles.new()
 	s.directory = "res://saves/"
 	s.save_generator_output = true
@@ -68,7 +70,9 @@ func _process(delta):
 			ToolType.CREASE:
 				voxel_tool.mode = VoxelTool.MODE_CREASE if not tool_reversed else VoxelTool.MODE_SMOOTH
 			ToolType.PLANE:
-				voxel_tool.mode = VoxelTool.MODE_PLANE
+				voxel_tool.mode = VoxelTool.MODE_PLANE if not tool_reversed else VoxelTool.MODE_LEVEL
+			ToolType.LEVEL:
+				voxel_tool.mode = VoxelTool.MODE_LEVEL if not tool_reversed else VoxelTool.MODE_PLANE
 
 		voxel_tool.do_sphere(raycast_result.position, tool_radius / voxel_scale)
 		raycast_dirty = true
@@ -82,26 +86,46 @@ func _unhandled_input(event : InputEvent):
 					tool_active = false
 				else:
 					tool_active = true
-					tool_reversed = event.control
-	if event is InputEventMouseMotion:
+	elif event is InputEventMouseMotion:
 		raycast_dirty = true
 		screen_pos = event.position
+	elif event is InputEventKey:
+		var e := event as InputEventKey
+		match e.physical_scancode:
+			KEY_CONTROL:
+				if e.pressed:
+					if raycast_result != null:
+						constraint_enabled = true
+						constraint_plane = Plane(
+							raycast_result.normal,
+							raycast_result.normal.dot(raycast_result.position))
+				else:
+					constraint_enabled = false
+					raycast_dirty = true
 
 func screen_raycast(pos2 : Vector2) -> RaycastResult:
 	var origin := to_local(camera.global_transform.origin) #to_local(camera.project_ray_origin(screen_pos))
 	var direction := global_transform.basis.xform_inv(camera.project_ray_normal(pos2))
 	direction = direction.normalized()
 	var dist_max := max_edition_distance / voxel_scale
-	var result := voxel_tool.raycast(origin, direction, dist_max)
-	if result != null and result.distance < dist_max: # and result.distance > 2.0
-		return RaycastResult.new(origin + direction * result.distance, result.normal)
-	else:
-		var dist_to_bottom := (voxel_z / voxel_scale + 0.1 - origin.y) / direction.y
-		var position := origin + dist_to_bottom * direction
-		if dist_to_bottom > 0 and voxel_bounds.has_point(position):
-			return RaycastResult.new(position, Vector3.UP)
+
+	if constraint_enabled:
+		var result := constraint_plane.intersects_ray(origin, direction)
+		if result != null and origin.distance_to(result) < dist_max:
+			return RaycastResult.new(result, constraint_plane.normal)
 		else:
 			return null
+	else:
+		var result := voxel_tool.raycast(origin, direction, dist_max)
+		if result != null and result.distance < dist_max: # and result.distance > 2.0
+			return RaycastResult.new(origin + direction * result.distance, result.normal)
+		else:
+			var dist_to_bottom := (voxel_z / voxel_scale + 0.1 - origin.y) / direction.y
+			var position := origin + dist_to_bottom * direction
+			if dist_to_bottom > 0 and voxel_bounds.has_point(position):
+				return RaycastResult.new(position, Vector3.UP)
+			else:
+				return null
 
 func _on_HUD_tool_radius_changed(radius):
 	tool_radius = radius
@@ -112,7 +136,7 @@ func _on_HUD_tool_type_changed(type):
 func _on_HUD_tool_weight_changed(weight):
 	tool_weight = weight
 
-func _on_camera_moving(is_moving):
+func _on_camera_moving(is_moving : bool, _horizontal_anchor := false):
 	camera_active = is_moving
 	if camera_active:
 		tool_active = false

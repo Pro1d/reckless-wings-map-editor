@@ -45,9 +45,12 @@ func set_lock_position(lock : bool) -> void:
 	if not lock:
 		update_tool_position()
 
-func _on_camera_moving(is_moving : bool):
-	var billboard := is_moving
+func _on_camera_moving(is_moving : bool, horizontal_anchor : bool):
+	var billboard := is_moving and not horizontal_anchor
 	var shape_mode := 1 if is_moving else 0
+	if is_moving and horizontal_anchor:
+		tool_normal = Vector3.UP
+		update_tool_position()
 	shader().set_shader_param("billboard", billboard)
 	shader().set_shader_param("shape_mode", shape_mode)
 	set_lock_position(is_moving)
