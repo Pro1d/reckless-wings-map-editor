@@ -11,15 +11,15 @@ var tool_type := ToolType.BURRY setget set_tool_type
 var tool_radius : float = 0.0 setget set_tool_radius
 var tool_weight : float = 0.0 setget set_tool_weight
 
-onready var button_burry := $CenterContainer/Tools/ButtonBurry
-onready var button_dig := $CenterContainer/Tools/ButtonDig
-onready var button_level := $CenterContainer/Tools/ButtonLevel
-onready var button_plane := $CenterContainer/Tools/ButtonPlane
-onready var button_smooth := $CenterContainer/Tools/ButtonSmooth
-onready var button_crease := $CenterContainer/Tools/ButtonCrease
-onready var slider_radius := $CenterContainer/Tools/VBoxContainerRadius/SliderRadius
-onready var slider_weight := $CenterContainer/Tools/VBoxContainerWeight/SliderWeight
-onready var button_reset_camera := $CenterContainer/Tools/ButtonResetCamera
+onready var button_burry := $CenterContainer/PanelContainer/Tools/ButtonBurry
+onready var button_dig := $CenterContainer/PanelContainer/Tools/ButtonDig
+onready var button_level := $CenterContainer/PanelContainer/Tools/ButtonLevel
+onready var button_plane := $CenterContainer/PanelContainer/Tools/ButtonPlane
+onready var button_smooth := $CenterContainer/PanelContainer/Tools/ButtonSmooth
+onready var button_crease := $CenterContainer/PanelContainer/Tools/ButtonCrease
+onready var slider_radius := $CenterContainer/PanelContainer/Tools/VBoxContainerRadius/SliderRadius
+onready var slider_weight := $CenterContainer/PanelContainer/Tools/VBoxContainerWeight/SliderWeight
+onready var button_reset_camera := $CenterContainer/PanelContainer/Tools/ButtonResetCamera
 
 func _ready():
 	var _e := OK # enum Error
@@ -60,12 +60,12 @@ func set_tool_type(type) -> void:
 
 func set_tool_radius(radius : float) -> void:
 	tool_radius = radius
-	$CenterContainer/Tools/VBoxContainerRadius/LabelRadius.text = "Radius: "+str(radius)+"m"
+	$CenterContainer/PanelContainer/Tools/VBoxContainerRadius/LabelRadius.text = "Radius: "+str(radius)+"m"
 	emit_signal("tool_radius_changed", radius)
 
 func set_tool_weight(weight : float) -> void:
 	tool_weight = weight
-	$CenterContainer/Tools/VBoxContainerWeight/LabelWeight.text = "Weight: "+str(round(weight * 100))+"%"
+	$CenterContainer/PanelContainer/Tools/VBoxContainerWeight/LabelWeight.text = "Weight: "+str(round(weight * 100))+"%"
 	emit_signal("tool_weight_changed", weight)
 
 func _button_burry():
