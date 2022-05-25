@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=2]
+[gd_scene load_steps=41 format=2]
 
 [ext_resource path="res://materials/realistic_terrain.gdshader" type="Shader" id=1]
 [ext_resource path="res://scripts/VoxelModifier.gd" type="Script" id=2]
@@ -22,6 +22,8 @@
 [ext_resource path="res://scripts/tool_shader.tres" type="Material" id=20]
 [ext_resource path="res://scripts/piper_pa18.gd" type="Script" id=21]
 [ext_resource path="res://assets/PalmTree/MeshPalm02.tres" type="ArrayMesh" id=22]
+[ext_resource path="res://assets/trees/Foliage_Trees_03.tres" type="ArrayMesh" id=23]
+[ext_resource path="res://assets/trees/bush_fern_joined.tres" type="ArrayMesh" id=24]
 
 [sub_resource type="VoxelMesherTransvoxel" id=12]
 
@@ -68,8 +70,49 @@ mesh_lod1 = ExtResource( 22 )
 mesh_lod2 = ExtResource( 22 )
 mesh_lod3 = ExtResource( 22 )
 
+[sub_resource type="FastNoiseLite" id=33]
+period = 128.0
+fractal_type = 3
+
+[sub_resource type="VoxelInstanceGenerator" id=34]
+density = 0.492
+emit_mode = 1
+max_slope_degrees = 31.5
+min_height = 12.0
+max_height = 256.0
+min_scale = 0.004
+max_scale = 0.003
+noise = SubResource( 33 )
+
+[sub_resource type="VoxelInstanceLibraryItem" id=35]
+lod_index = 1
+generator = SubResource( 34 )
+mesh = ExtResource( 23 )
+
+[sub_resource type="FastNoiseLite" id=36]
+fractal_type = 2
+
+[sub_resource type="VoxelInstanceGenerator" id=37]
+density = 0.37
+emit_mode = 1
+max_slope_degrees = 30.0
+min_height = 8.1
+max_height = 9.1
+min_scale = 0.05
+max_scale = 0.05
+vertical_alignment = 0.0
+noise = SubResource( 36 )
+noise_dimension = 0
+
+[sub_resource type="VoxelInstanceLibraryItem" id=38]
+lod_index = 1
+generator = SubResource( 37 )
+mesh = ExtResource( 24 )
+
 [sub_resource type="VoxelInstanceLibrary" id=32]
 item_1 = SubResource( 31 )
+item_2 = SubResource( 35 )
+item_3 = SubResource( 38 )
 
 [sub_resource type="PlaneMesh" id=19]
 size = Vector2( 16384, 16384 )
