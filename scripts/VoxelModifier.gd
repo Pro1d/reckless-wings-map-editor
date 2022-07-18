@@ -142,3 +142,100 @@ func _on_camera_moving(is_moving : bool, _horizontal_anchor := false):
 		tool_active = false
 	else:
 		raycast_dirty = true
+
+func prop_print(obj):
+	var list = obj.get_property_list()
+	for elt in list:
+		print ("[", elt["class_name"], "] ", elt["name"], " = ", var2str(obj.get(elt["name"])))
+
+func get_noise_data(osn : OpenSimplexNoise):
+	var data := {}
+	for key in ["seed", "octaves", "period", "persistence", "lacunarity"]:
+		data[key] = var2str(osn.get(key))
+	return data
+func get_fast_noise_data(fnl : FastNoiseLite):
+	var data := var2str(fnl)
+	#prop_print(fnl)
+	#prop_print(str2var(data))
+	#for key in ["seed", "octaves", "period", "persistence", "lacunarity"]:
+	#	data[key] = var2str(fnl.get(key))
+	return data
+
+func get_curve_data(c : Curve):
+	prop_print(c)
+	prop_print(str2var(var2str(c)))
+	var data := {}
+	for key in ["min_value", "max_value", "bake_resolution", "_data"]:
+		data[key] = var2str(c.get(key))
+	return data
+
+func get_save_data():
+	var s = var2str(self)
+	for i in range(int(len(s) / 50)):
+		print(s.substr(i*50, 50))
+	return var2bytes(self) # unset material? unset ...?
+	var data := {}
+	#prop_print(self)
+	assert(generator.voxel_scale == scale.x)
+	assert(generator.voxel_scale == scale.y)
+	assert(generator.voxel_scale == scale.z)
+	assert(generator.sea_height == -translation.y)
+	data["scale"] = var2str(scale)
+	data["translation"] = var2str(translation)
+	data["view_distance"] = var2str(view_distance)
+	data["voxel_bounds"] = var2str(voxel_bounds)
+	data["lod_count"] = var2str(lod_count)
+	data["lod_distance"] = var2str(lod_distance)
+	data["generator"] = {
+		"voxel_scale": generator.voxel_scale,
+		"sea_height": generator.sea_height,
+		"max_height": generator.max_height,
+		"radius": generator.radius,
+		"radius_cutoff_power": generator.radius_cutoff_power,
+		"radius_cutoff_scale": generator.radius_cutoff_scale,
+		"ground_ratio": generator.ground_ratio,
+		"biome_transition": generator.biome_transition,
+		"biome_noise": get_noise_data(generator.biome_noise),
+		"height_noise": get_noise_data(generator.height_noise),
+		"curve_biome0": get_curve_data(generator.curve_biome0),
+		"curve_biome1": get_curve_data(generator.curve_biome1),
+		"cliff_noise": get_noise_data(generator.cliff_noise),
+		"cliff_noise_factor": generator.cliff_noise_factor,
+	}
+	data["instancer"] = []
+	for prop in $VoxelInstancer.library.get_property_list():
+		if prop["class_name"] == "VoxelInstanceLibraryItemBase":
+			var item = $VoxelInstancer.library.get(prop["name"])
+			#prop_print(item)
+			#print('- -')
+			#prop_print(item.generator)
+			data["instancer"].append({
+				# mesh, mesh_lod1, mesh_lod2, mesh_lod3, collision_shapes
+				"cast_shadow": var2str(item.cast_shadow),
+				"collision_layer": var2str(item.collision_layer),
+				"collision_mask": var2str(item.collision_mask),
+				"generator": {
+					"density": var2str(item.generator.density),
+					"emit_mode": var2str(item.generator.emit_mode),
+					"min_slope_degrees": var2str(item.generator.min_slope_degrees),
+					"min_height": var2str(item.generator.min_height),
+					"max_height": var2str(item.generator.max_height),
+					"min_scale": var2str(item.generator.min_scale),
+					"max_scale": var2str(item.generator.max_scale),
+					"scale_distribution": var2str(item.generator.scale_distribution),
+					"vertical_alignment": var2str(item.generator.vertical_alignment),
+					"random_vertical_flip": var2str(item.generator.random_vertical_flip),
+					"random_rotation": var2str(item.generator.random_rotation),
+					"offset_along_normal": var2str(item.generator.offset_along_normal),
+					"noise": get_fast_noise_data(item.generator.noise),
+					"noise_dimension": var2str(item.generator.noise_dimension),
+					"noise_on_scale": var2str(item.generator.noise_on_scale),
+				},
+			})
+	#print(get_noise_data(generator.biome_noise))
+	#print(get_curve_data(generator.curve_biome0))
+	#prop_print(generator)
+	return data
+
+func _on_HUD_save_map(map_name):
+	get_save_data()

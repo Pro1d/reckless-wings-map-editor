@@ -6,6 +6,7 @@ signal tool_type_changed(type)
 signal tool_radius_changed(radius)
 signal tool_weight_changed(weight)
 signal reset_camera_triggered()
+signal save_map(map_name)
 
 var tool_type := ToolType.BURRY setget set_tool_type
 var tool_radius : float = 0.0 setget set_tool_radius
@@ -20,6 +21,7 @@ onready var button_crease := $CenterContainer/PanelContainer/Tools/ButtonCrease
 onready var slider_radius := $CenterContainer/PanelContainer/Tools/VBoxContainerRadius/SliderRadius
 onready var slider_weight := $CenterContainer/PanelContainer/Tools/VBoxContainerWeight/SliderWeight
 onready var button_reset_camera := $CenterContainer/PanelContainer/Tools/ButtonResetCamera
+onready var button_save := $CenterContainer/PanelContainer/Tools/ButtonSave
 
 func _ready():
 	var _e := OK # enum Error
@@ -32,6 +34,7 @@ func _ready():
 	_e = slider_radius.connect("value_changed", self, "set_tool_radius")
 	_e = slider_weight.connect("value_changed", self, "set_tool_weight")
 	_e = button_reset_camera.connect("pressed", self, "_button_reset_camera")
+	_e = button_save.connect("pressed", self, "_button_save")
 	set_default_tool()
 
 func _unhandled_input(event : InputEvent):
@@ -42,7 +45,7 @@ func _unhandled_input(event : InputEvent):
 				slider_radius.value = tool_radius - 1
 			elif e.button_index == BUTTON_WHEEL_UP:
 				slider_radius.value = tool_radius + 1
-				
+
 func set_default_tool() -> void:
 	self.tool_type = ToolType.BURRY
 	slider_radius.value = 20.0
@@ -82,3 +85,5 @@ func _button_crease():
 	self.tool_type = ToolType.CREASE
 func _button_reset_camera():
 	emit_signal("reset_camera_triggered")
+func _button_save():
+	emit_signal("save_map", "latest")

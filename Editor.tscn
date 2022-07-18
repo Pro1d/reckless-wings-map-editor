@@ -88,6 +88,9 @@ noise = SubResource( 33 )
 lod_index = 1
 generator = SubResource( 34 )
 mesh = ExtResource( 23 )
+mesh_lod1 = ExtResource( 23 )
+mesh_lod2 = ExtResource( 23 )
+mesh_lod3 = ExtResource( 23 )
 
 [sub_resource type="FastNoiseLite" id=36]
 fractal_type = 2
@@ -108,6 +111,9 @@ noise_dimension = 0
 lod_index = 1
 generator = SubResource( 37 )
 mesh = ExtResource( 24 )
+mesh_lod1 = ExtResource( 24 )
+mesh_lod2 = ExtResource( 24 )
+mesh_lod3 = ExtResource( 24 )
 
 [sub_resource type="VoxelInstanceLibrary" id=32]
 item_1 = SubResource( 31 )
@@ -228,7 +234,6 @@ view_distance = 1024
 voxel_bounds = AABB( -256, 0, -256, 512, 256, 512 )
 lod_distance = 128.0
 material = SubResource( 24 )
-generate_collisions = false
 script = ExtResource( 2 )
 
 [node name="VoxelInstancer" type="VoxelInstancer" parent="VoxelLodTerrain"]
@@ -254,6 +259,7 @@ transform = Transform( 0.353321, -0.172414, 0.919477, -0.0384943, 0.979358, 0.19
 script = ExtResource( 21 )
 
 [connection signal="reset_camera_triggered" from="HUD" to="Camera" method="_on_HUD_reset_camera_triggered"]
+[connection signal="save_map" from="HUD" to="VoxelLodTerrain" method="_on_HUD_save_map"]
 [connection signal="tool_radius_changed" from="HUD" to="VoxelLodTerrain" method="_on_HUD_tool_radius_changed"]
 [connection signal="tool_radius_changed" from="HUD" to="ToolTangent" method="_on_HUD_tool_radius_changed"]
 [connection signal="tool_type_changed" from="HUD" to="VoxelLodTerrain" method="_on_HUD_tool_type_changed"]
