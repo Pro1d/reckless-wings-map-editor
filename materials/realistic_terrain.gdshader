@@ -108,6 +108,7 @@ vec3 normalize_nmap(vec3 n) {
 	return normalize(n * 2. - 1.) * .5 + .5;
 }
 
+
 void fragment() {
 	float shore = smoothstep(0, shore_height, v_height);
 	vec4 albedo_tex = triplanar_texture_auto(
@@ -118,21 +119,43 @@ void fragment() {
 		texture_ambient_occlusion, texture_ambient_occlusion_top, texture_ambient_occlusion_bottom, shore, uv1_power_normal, uv1_triplanar_pos).r;
 	vec3 normal_tex = normalize_nmap(triplanar_texture_auto(
 		texture_normal, texture_normal_top, texture_normal_bottom, shore, uv1_power_normal, uv1_triplanar_pos).rgb);
-	float rock_weight = v_tex_weights.y / 255.0;
-	if (rock_weight > 0.01) {
-		vec4 albedo_rock = triplanar_texture(texture_albedo, uv1_power_normal, uv1_triplanar_pos);
-		float ao_rock = triplanar_texture(texture_ambient_occlusion, uv1_power_normal, uv1_triplanar_pos).r;
-		vec3 normal_rock = triplanar_texture(texture_normal, uv1_power_normal, uv1_triplanar_pos).rgb;
-		albedo_tex = mix(albedo_tex, albedo_rock, rock_weight);
-		normal_tex = mix(normal_tex, normal_rock, rock_weight);
-		ao_tex = mix(ao_tex, ao_rock, rock_weight);
+	float w[4] = {
+		v_tex_weights.x / 255.0,
+		v_tex_weights.y / 255.0,
+		v_tex_weights.z / 255.0,
+		v_tex_weights.w / 255.0};
+	w[0] = 1.0 - w[1] - w[2] - w[3];
+	albedo_tex *= w[0];
+	ao_tex *= w[0];
+	normal_tex *= w[0];
+	{
+		int i = 1;
+		if (w[i] > 0.01) {
+			albedo_tex += triplanar_texture(texture_albedo, uv1_power_normal, uv1_triplanar_pos) * w[i];
+			ao_tex += triplanar_texture(texture_ambient_occlusion, uv1_power_normal, uv1_triplanar_pos).r * w[i];
+			normal_tex += triplanar_texture(texture_normal, uv1_power_normal, uv1_triplanar_pos).rgb * w[i];
+		}
+	}{
+		int i = 2;
+		if (w[i] > 0.01) {
+			albedo_tex += triplanar_texture(texture_albedo_top, uv1_power_normal, uv1_triplanar_pos) * w[i];
+			ao_tex += triplanar_texture(texture_ambient_occlusion_top, uv1_power_normal, uv1_triplanar_pos).r * w[i];
+			normal_tex += triplanar_texture(texture_normal_top, uv1_power_normal, uv1_triplanar_pos).rgb * w[i];
+		}
+	}{
+		int i = 3;
+		if (w[i] > 0.01) {
+			albedo_tex += triplanar_texture(texture_albedo_bottom, uv1_power_normal, uv1_triplanar_pos) * w[i];
+			ao_tex += triplanar_texture(texture_ambient_occlusion_bottom, uv1_power_normal, uv1_triplanar_pos).r * w[i];
+			normal_tex += triplanar_texture(texture_normal_bottom, uv1_power_normal, uv1_triplanar_pos).rgb * w[i];
+		}
 	}
 	float wet = 1.0 - smoothstep(0, 2, v_height);
 	ALBEDO = albedo_tex.rgb * mix(1.0, darken_wet, wet);
 	METALLIC = metallic;
 	ROUGHNESS = roughness;
 	SPECULAR = specular;
-	NORMALMAP = normal_tex;
+	NORMALMAP = normalize(normal_tex);
 	NORMALMAP_DEPTH = normal_scale;
 	AO = ao_tex;
 	AO_LIGHT_AFFECT = ao_light_affect;
