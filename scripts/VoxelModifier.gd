@@ -25,6 +25,7 @@ var tool_reversed := false # TODO from hud: toggle tool on control pressed/relea
 var tool_type := ToolType.BURRY
 var tool_radius : float
 var tool_weight : float
+var tool_texture_index : int
 var edition_elapsed := 0.0
 onready var voxel_scale := global_transform.basis.get_scale().x;
 onready var voxel_z := global_transform.origin.z;
@@ -75,7 +76,7 @@ func _process(delta):
 				voxel_tool.mode = VoxelTool.MODE_LEVEL if not tool_reversed else VoxelTool.MODE_PLANE
 			ToolType.PAINT:
 				voxel_tool.mode = VoxelTool.MODE_TEXTURE_PAINT
-				voxel_tool.texture_index = 1
+				voxel_tool.texture_index = tool_texture_index
 				voxel_tool.texture_opacity = tool_weight
 				voxel_tool.texture_falloff = 0.25
 
@@ -140,6 +141,9 @@ func _on_HUD_tool_type_changed(type):
 
 func _on_HUD_tool_weight_changed(weight):
 	tool_weight = weight
+
+func _on_HUD_tool_texture_index_changed(index):
+	tool_texture_index = index
 
 func _on_camera_moving(is_moving : bool, _horizontal_anchor := false):
 	camera_active = is_moving
@@ -244,3 +248,4 @@ func get_save_data():
 
 func _on_HUD_save_map(map_name):
 	get_save_data()
+

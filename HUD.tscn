@@ -16,6 +16,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="FpsCounter" type="Label" parent="."]
 margin_left = 12.0
@@ -26,6 +29,9 @@ custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_as_outline = 8
 text = "300 fps"
 script = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 anchor_top = 1.0
@@ -35,14 +41,14 @@ margin_bottom = -20.0
 grow_vertical = 0
 
 [node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
-margin_left = 62.0
-margin_right = 961.0
+margin_left = 13.0
+margin_right = 1010.0
 margin_bottom = 48.0
 
 [node name="Tools" type="HBoxContainer" parent="CenterContainer/PanelContainer"]
 margin_left = 7.0
 margin_top = 7.0
-margin_right = 892.0
+margin_right = 990.0
 margin_bottom = 41.0
 custom_constants/separation = 10
 
@@ -93,22 +99,33 @@ toggle_mode = true
 text = "Crease"
 icon = ExtResource( 6 )
 
-[node name="ButtonPaint" type="Button" parent="CenterContainer/PanelContainer/Tools"]
+[node name="VSeparator3" type="VSeparator" parent="CenterContainer/PanelContainer/Tools"]
 margin_left = 448.0
-margin_right = 510.0
+margin_right = 452.0
+margin_bottom = 34.0
+
+[node name="ButtonPaint" type="Button" parent="CenterContainer/PanelContainer/Tools"]
+margin_left = 462.0
+margin_right = 524.0
 margin_bottom = 34.0
 toggle_mode = true
 text = "Paint"
 icon = ExtResource( 10 )
 
+[node name="SpinBoxTexture" type="SpinBox" parent="CenterContainer/PanelContainer/Tools"]
+margin_left = 534.0
+margin_right = 608.0
+margin_bottom = 34.0
+max_value = 4.0
+
 [node name="VSeparator" type="VSeparator" parent="CenterContainer/PanelContainer/Tools"]
-margin_left = 520.0
-margin_right = 524.0
+margin_left = 618.0
+margin_right = 622.0
 margin_bottom = 34.0
 
 [node name="VBoxContainerRadius" type="VBoxContainer" parent="CenterContainer/PanelContainer/Tools"]
-margin_left = 534.0
-margin_right = 634.0
+margin_left = 632.0
+margin_right = 732.0
 margin_bottom = 34.0
 
 [node name="LabelRadius" type="Label" parent="CenterContainer/PanelContainer/Tools/VBoxContainerRadius"]
@@ -127,8 +144,8 @@ max_value = 50.0
 value = 5.0
 
 [node name="VBoxContainerWeight" type="VBoxContainer" parent="CenterContainer/PanelContainer/Tools"]
-margin_left = 644.0
-margin_right = 744.0
+margin_left = 742.0
+margin_right = 842.0
 margin_bottom = 34.0
 alignment = 1
 
@@ -149,19 +166,19 @@ tick_count = 3
 ticks_on_borders = true
 
 [node name="VSeparator2" type="VSeparator" parent="CenterContainer/PanelContainer/Tools"]
-margin_left = 754.0
-margin_right = 758.0
+margin_left = 852.0
+margin_right = 856.0
 margin_bottom = 34.0
 
 [node name="ButtonResetCamera" type="Button" parent="CenterContainer/PanelContainer/Tools"]
-margin_left = 768.0
-margin_right = 834.0
+margin_left = 866.0
+margin_right = 932.0
 margin_bottom = 34.0
 text = "Reset"
 icon = ExtResource( 7 )
 
 [node name="ButtonSave" type="Button" parent="CenterContainer/PanelContainer/Tools"]
-margin_left = 844.0
-margin_right = 885.0
+margin_left = 942.0
+margin_right = 983.0
 margin_bottom = 34.0
 text = "Save"

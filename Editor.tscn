@@ -226,6 +226,7 @@ transform = Transform( -0.936311, 0, 0.351172, 0, 1, 0, -0.351172, 0, -0.936311,
 [connection signal="save_map" from="HUD" to="VoxelLodTerrain" method="_on_HUD_save_map"]
 [connection signal="tool_radius_changed" from="HUD" to="VoxelLodTerrain" method="_on_HUD_tool_radius_changed"]
 [connection signal="tool_radius_changed" from="HUD" to="ToolTangent" method="_on_HUD_tool_radius_changed"]
+[connection signal="tool_texture_index_changed" from="HUD" to="VoxelLodTerrain" method="_on_HUD_tool_texture_index_changed"]
 [connection signal="tool_type_changed" from="HUD" to="VoxelLodTerrain" method="_on_HUD_tool_type_changed"]
 [connection signal="tool_weight_changed" from="HUD" to="VoxelLodTerrain" method="_on_HUD_tool_weight_changed"]
 [connection signal="moving" from="Camera" to="VoxelLodTerrain" method="_on_camera_moving"]

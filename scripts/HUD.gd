@@ -3,12 +3,14 @@ extends Control
 const ToolType = preload("res://scripts/ToolType.gd")
 
 signal tool_type_changed(type)
+signal tool_texture_index_changed(index)
 signal tool_radius_changed(radius)
 signal tool_weight_changed(weight)
 signal reset_camera_triggered()
 signal save_map(map_name)
 
 var tool_type := ToolType.BURRY setget set_tool_type
+var tool_texture_index := 0 setget set_tool_texture_index
 var tool_radius : float = 0.0 setget set_tool_radius
 var tool_weight : float = 0.0 setget set_tool_weight
 
@@ -19,6 +21,7 @@ onready var button_plane := $CenterContainer/PanelContainer/Tools/ButtonPlane
 onready var button_smooth := $CenterContainer/PanelContainer/Tools/ButtonSmooth
 onready var button_crease := $CenterContainer/PanelContainer/Tools/ButtonCrease
 onready var button_paint := $CenterContainer/PanelContainer/Tools/ButtonPaint
+onready var spin_box_texture := $CenterContainer/PanelContainer/Tools/SpinBoxTexture
 onready var slider_radius := $CenterContainer/PanelContainer/Tools/VBoxContainerRadius/SliderRadius
 onready var slider_weight := $CenterContainer/PanelContainer/Tools/VBoxContainerWeight/SliderWeight
 onready var button_reset_camera := $CenterContainer/PanelContainer/Tools/ButtonResetCamera
@@ -33,6 +36,7 @@ func _ready():
 	_e = button_smooth.connect("pressed", self, "_button_smooth")
 	_e = button_crease.connect("pressed", self, "_button_crease")
 	_e = button_paint.connect("pressed", self, "_button_paint")
+	_e = spin_box_texture.connect("value_changed", self, "_spin_box_texture")
 	_e = slider_radius.connect("value_changed", self, "set_tool_radius")
 	_e = slider_weight.connect("value_changed", self, "set_tool_weight")
 	_e = button_reset_camera.connect("pressed", self, "_button_reset_camera")
@@ -50,6 +54,7 @@ func _unhandled_input(event : InputEvent):
 
 func set_default_tool() -> void:
 	self.tool_type = ToolType.BURRY
+	spin_box_texture.value = 1
 	slider_radius.value = 20.0
 	slider_weight.value = 0.5
 
@@ -63,6 +68,10 @@ func set_tool_type(type) -> void:
 	button_crease.set_pressed_no_signal(type == ToolType.CREASE)
 	button_paint.set_pressed_no_signal(type == ToolType.PAINT)
 	emit_signal("tool_type_changed", type)
+
+func set_tool_texture_index(index : int) -> void:
+	tool_texture_index = index
+	emit_signal("tool_texture_index_changed", index)
 
 func set_tool_radius(radius : float) -> void:
 	tool_radius = radius
@@ -88,6 +97,8 @@ func _button_crease():
 	self.tool_type = ToolType.CREASE
 func _button_paint():
 	self.tool_type = ToolType.PAINT
+func _spin_box_texture(value):
+	self.tool_texture_index = int(value)
 func _button_reset_camera():
 	emit_signal("reset_camera_triggered")
 func _button_save():
