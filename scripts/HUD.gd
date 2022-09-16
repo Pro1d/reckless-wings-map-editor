@@ -18,6 +18,7 @@ onready var button_level := $CenterContainer/PanelContainer/Tools/ButtonLevel
 onready var button_plane := $CenterContainer/PanelContainer/Tools/ButtonPlane
 onready var button_smooth := $CenterContainer/PanelContainer/Tools/ButtonSmooth
 onready var button_crease := $CenterContainer/PanelContainer/Tools/ButtonCrease
+onready var button_paint := $CenterContainer/PanelContainer/Tools/ButtonPaint
 onready var slider_radius := $CenterContainer/PanelContainer/Tools/VBoxContainerRadius/SliderRadius
 onready var slider_weight := $CenterContainer/PanelContainer/Tools/VBoxContainerWeight/SliderWeight
 onready var button_reset_camera := $CenterContainer/PanelContainer/Tools/ButtonResetCamera
@@ -31,6 +32,7 @@ func _ready():
 	_e = button_plane.connect("pressed", self, "_button_plane")
 	_e = button_smooth.connect("pressed", self, "_button_smooth")
 	_e = button_crease.connect("pressed", self, "_button_crease")
+	_e = button_paint.connect("pressed", self, "_button_paint")
 	_e = slider_radius.connect("value_changed", self, "set_tool_radius")
 	_e = slider_weight.connect("value_changed", self, "set_tool_weight")
 	_e = button_reset_camera.connect("pressed", self, "_button_reset_camera")
@@ -59,6 +61,7 @@ func set_tool_type(type) -> void:
 	button_plane.set_pressed_no_signal(type == ToolType.PLANE)
 	button_smooth.set_pressed_no_signal(type == ToolType.SMOOTH)
 	button_crease.set_pressed_no_signal(type == ToolType.CREASE)
+	button_paint.set_pressed_no_signal(type == ToolType.PAINT)
 	emit_signal("tool_type_changed", type)
 
 func set_tool_radius(radius : float) -> void:
@@ -83,6 +86,8 @@ func _button_smooth():
 	self.tool_type = ToolType.SMOOTH
 func _button_crease():
 	self.tool_type = ToolType.CREASE
+func _button_paint():
+	self.tool_type = ToolType.PAINT
 func _button_reset_camera():
 	emit_signal("reset_camera_triggered")
 func _button_save():

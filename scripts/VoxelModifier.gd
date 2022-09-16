@@ -34,7 +34,7 @@ onready var screen_pos := get_viewport().get_mouse_position()
 
 func _enter_tree():
 	var s := VoxelStreamRegionFiles.new()
-	s.directory = "res://saves/"
+	s.directory = "res://saves2/"
 	s.save_generator_output = true
 	s.lod_count = lod_count
 	stream = s
@@ -73,6 +73,11 @@ func _process(delta):
 				voxel_tool.mode = VoxelTool.MODE_PLANE if not tool_reversed else VoxelTool.MODE_LEVEL
 			ToolType.LEVEL:
 				voxel_tool.mode = VoxelTool.MODE_LEVEL if not tool_reversed else VoxelTool.MODE_PLANE
+			ToolType.PAINT:
+				voxel_tool.mode = VoxelTool.MODE_TEXTURE_PAINT
+				voxel_tool.texture_index = 1
+				voxel_tool.texture_opacity = tool_weight
+				voxel_tool.texture_falloff = 0.25
 
 		voxel_tool.do_sphere(raycast_result.position, tool_radius / voxel_scale)
 		raycast_dirty = true

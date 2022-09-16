@@ -27,8 +27,37 @@ const int uv1_blend_sharpness = 16;
 varying vec3 uv1_power_normal;
 uniform float uv1_scale;
 varying float v_height;
+varying vec4 v_tex_weights;
 const float darken_wet = 0.25;
 const float shore_height = 17.0; // must be > 2^lod_max
+
+// It returns 4 values in the range [0..255].
+vec4 decode_8bit_vec4(float v) {
+    uint i = floatBitsToUint(v);
+    return vec4(
+        float(i & uint(0xff)),
+        float((i >> uint(8)) & uint(0xff)),
+        float((i >> uint(16)) & uint(0xff)),
+        float((i >> uint(24)) & uint(0xff)));
+}
+
+// A voxel mesh can have overhangs in any direction,
+// so we may have to use triplanar mapping functions.
+vec3 get_triplanar_blend(vec3 world_normal) {
+    vec3 blending = abs(world_normal);
+    blending = normalize(max(blending, vec3(0.00001))); // Force weights to sum to 1.0
+    float b = blending.x + blending.y + blending.z;
+    return blending / vec3(b, b, b);
+}
+
+vec4 texture_array_triplanar(sampler2DArray tex, vec3 world_pos, vec3 blend, float i) {
+    vec4 xaxis = texture(tex, vec3(world_pos.yz, i));
+    vec4 yaxis = texture(tex, vec3(world_pos.xz, i));
+    vec4 zaxis = texture(tex, vec3(world_pos.xy, i));
+    // blend the results of the 3 planar projections.
+    return xaxis * blend.x + yaxis * blend.y + zaxis * blend.z;
+}
+
 
 void vertex() {
 	TANGENT = vec3(0.0,0.0,-1.0) * abs(NORMAL.x);
@@ -45,6 +74,7 @@ void vertex() {
 	uv1_power_normal.y *= NORMAL.y < 0.0 ? -1.0 : 1.0;
 	uv1_triplanar_pos = VERTEX * uv1_scale * vec3(1.0,-1.0, 1.0) + vec3(.0, .3, .6);
 	v_height = VERTEX.y;
+	v_tex_weights = decode_8bit_vec4(UV.y);
 }
 
 
@@ -88,6 +118,15 @@ void fragment() {
 		texture_ambient_occlusion, texture_ambient_occlusion_top, texture_ambient_occlusion_bottom, shore, uv1_power_normal, uv1_triplanar_pos).r;
 	vec3 normal_tex = normalize_nmap(triplanar_texture_auto(
 		texture_normal, texture_normal_top, texture_normal_bottom, shore, uv1_power_normal, uv1_triplanar_pos).rgb);
+	float rock_weight = v_tex_weights.y / 255.0;
+	if (rock_weight > 0.01) {
+		vec4 albedo_rock = triplanar_texture(texture_albedo, uv1_power_normal, uv1_triplanar_pos);
+		float ao_rock = triplanar_texture(texture_ambient_occlusion, uv1_power_normal, uv1_triplanar_pos).r;
+		vec3 normal_rock = triplanar_texture(texture_normal, uv1_power_normal, uv1_triplanar_pos).rgb;
+		albedo_tex = mix(albedo_tex, albedo_rock, rock_weight);
+		normal_tex = mix(normal_tex, normal_rock, rock_weight);
+		ao_tex = mix(ao_tex, ao_rock, rock_weight);
+	}
 	float wet = 1.0 - smoothstep(0, 2, v_height);
 	ALBEDO = albedo_tex.rgb * mix(1.0, darken_wet, wet);
 	METALLIC = metallic;

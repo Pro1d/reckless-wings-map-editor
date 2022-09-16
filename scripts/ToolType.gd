@@ -1,3 +1,3 @@
 class_name Enum
 
-enum {BURRY, DIG, SMOOTH, CREASE, PLANE, LEVEL};
+enum {BURRY, DIG, SMOOTH, CREASE, PLANE, LEVEL, PAINT};
